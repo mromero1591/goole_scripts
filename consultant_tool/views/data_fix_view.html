@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <style>
+      #sucessBanner {
+        display: none;
+        margin-top: 5px;
+      }
+      
+      #failBanner {
+        display: none;
+        margin-top: 5px;
+      }
+      
+      #otherText {
+        margin-top: 5px;
+      }
+      
+      .btn:hover {
+        cursor: pointer;
+      }
+    </style>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <div class="container" id="main">
+      <div class="form-group">
+        <label for="issueType">Field Name:</label> 
+        <select class="form-control" id="issueType" v-model="issueSelected">
+          <option value=""></option>
+          <option>Balance</option>
+          <option>Budgeted Rent</option>
+          <option>Charge Codes</option>
+          <option>Demographics</option>
+          <option>Deposits</option>
+          <option>GL</option>
+          <option>Insurance</option>
+          <option>Leads</option>
+          <option>Lease Dates</option>
+          <option>Market Rent</option>
+          <option>Post Month / Lock Books</option>
+          <option>Rentable Items</option>
+          <option>Scheduled Billing</option>
+          <option>Sqft</option>
+          <option>Units</option>
+          <option>Unit Address</option>
+          <option>Unit Status</option>
+          <option>Unit Type</option>
+          <option>Other</option>  
+        </select>
+        <input class="form-control" type="text" placeholder="Entere Issue Name..." v-if="issueSelected=='Other'" id="otherText">
+        <br>
+        <label for="fixType">Fix Type:</label> 
+        <select class="form-control" id="fixType" v-model="fixTypeSelected">
+          <option value=""></option>
+          <option>Migration Issue</option>
+          <option>Validation Issue</option>
+          <option>Client Issue/Change</option>
+          <option>Consultant ISsue/Change</option>
+          <option>Post-Go-Live issue/change</option>
+        </select>
+        <br>
+        <br>
+        <label for='numOfFixes'>Number of Fixes:</label>
+        <input class='form-control' type='number' name='numOfFixes' id='numOfFixes'>
+        <br>
+        <label for="description">Description:</label>
+        <br>
+        <textarea class="form-control" rows="3" placeholder="total units are not matching..." id="description"></textarea>
+        <br>
+        <label for="examples">Examples:</label>
+        <br>
+        <textarea class="form-control" rows="3" placeholder="Enter Example Here..." id="examples"></textarea>
+      </div> 
+      <div class="form-group">
+        <label for="emergency"> Does this need to be completed before site is returned to client</label>
+        <select class="form-control" id="emergency">
+          <option></option>
+          <option>no</option>
+          <option>yes</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary" id="requestChangeBtn" onclick="change(); google.script.run.withSuccessHandler(updateSideBar).requestDataFix($('#issueType').val(), $('#fixType').val(), $('#numOfFixes').val(), $('#description').val(), $('#examples').val(), $('#emergency').val(), $('#otherText').val())">Submit</button>
+      <button type="button" class="btn" onclick="google.script.host.close()">Close</button>
+      <br>
+      <div class="alert alert-success" role="alert" id="sucessBanner">
+        Request has been submitted!
+      </div>
+      <div class="alert alert-danger" role="alert" id="failBanner">
+        Request was not executed sucessfully! Site has not been validated.
+      </div>
+    </div>
+  
+  <!--the Jquery-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    function change() {
+      document.getElementById("requestChangeBtn").innerHTML="Please Wait";
+      var displayStatus = document.getElementById('sucessBanner');
+      displayStatus.style.display = 'none';
+      var failedDisplayStatus = document.getElementById('failBanner');
+      failedDisplayStatus.style.display = 'none';
+    }
+    
+    function updateSideBar(status) {
+        if(status == "Fail, Not Validated"){
+          document.getElementById("requestChangeBtn").innerHTML="Submit";
+          $("#examples").val("");
+          $("#description").val("");
+          $("#numOfFixes").val("");
+          $("#issueType").val("");
+          $("#fixType").val("");
+          $("#emergency").val("");
+          var displayStatus = document.getElementById('failBanner');
+          displayStatus.style.display = 'block';
+          app.issueSelected = "";
+        }
+        else {
+          document.getElementById("requestChangeBtn").innerHTML="Submit";
+          $("#examples").val("");
+          $("#description").val("");
+          $("#numOfFixes").val("");
+          $("#issueType").val("");
+          $("#fixType").val("");
+          $("#emergency").val("");
+          var displayStatus = document.getElementById('sucessBanner');
+          displayStatus.style.display = 'block';
+          app.issueSelected = "";
+        }
+    }
+    
+    var app = new Vue({
+      el: "#main",
+      data: {
+        isOther: false,
+        issueSelected: "",
+        fixTypeSelected: ""
+      },
+      methods: {
+        removeOther: function () {
+          return this.issueSelected = ""
+        }
+      }
+    })
+  </script>
+  
+  
+  </body>
+</html>
+
+

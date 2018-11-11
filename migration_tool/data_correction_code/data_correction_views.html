@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <style>
+      #sucessBanner {
+        display: none;
+        margin-top: 5px;
+      }
+      
+      #otherText {
+        margin-top: 5px;
+      }
+    </style>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <div class="container" id="main">
+      <div class="form-group">
+        <label for="issueType">Field Name:</label> 
+        <select class="form-control" id="issueType" v-model="issueSelected">
+          <option value=""></option>
+          <option>Accounting</option>
+          <option>Commercial</option>
+          <option>Charge Code Mapping</option>
+          <option>E2E Checklist</option>
+          <option>Floorplan / Unit Type Mapping</option>
+          <option>Maintenance Request</option>
+          <option>Operations</option>
+          <option>Past Resident Data</option>
+          <option>Reports</option>
+          <option>Rentable Items</option>
+          <option>Resident Info</option>
+          <option>Resident Insurance</option>
+          <option>Waitlist/ Leads</option>
+          <option>Yardi Checklist</option>
+          <option>Other</option>  
+        </select>
+        <input class="form-control" type="text" placeholder="Entere Issue Name..." v-if="issueSelected=='Other'" id="otherText">
+        <br>
+        <label for="description">Description:</label>
+        <br>
+        <textarea class="form-control" rows="3" placeholder="total units are not matching..." id="description"></textarea>
+      </div> 
+      <div class="form-group">
+        <label for="emergency"> Does this need to be completed before site is sent to BO team</label>
+        <select class="form-control" id="emergency">
+          <option></option>
+          <option>no</option>
+          <option>yes</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary" id="requestChangeBtn" onclick="change(); google.script.run.withSuccessHandler(updateSideBar).requestDataCorrection($('#issueType').val(), $('#description').val(), $('#emergency').val(), $('#otherText').val())">Submit</button>
+      <button type="button" class="btn" onclick="google.script.host.close()">Close</button>
+      <br>
+      <div class="alert alert-success" role="alert" id="sucessBanner">
+        Request has been submitted!
+      </div>
+    </div>
+  
+  <!--the Jquery-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    function change() {
+      document.getElementById("requestChangeBtn").innerHTML="Please Wait";
+      var displayStatus = document.getElementById('sucessBanner');
+      displayStatus.style.display = 'none';
+    }
+    function updateSideBar() {
+      document.getElementById("requestChangeBtn").innerHTML="Submit";
+      $("#description").val("");
+      $("#issueType").val("");
+      $("#emergency").val("");
+      var displayStatus = document.getElementById('sucessBanner');
+      displayStatus.style.display = 'block';
+      app.issueSelected = "";
+    }
+    
+    var app = new Vue({
+      el: "#main",
+      data: {
+        isOther: false,
+        issueSelected: ""
+      },
+      methods: {
+        removeOther: function () {
+          return this.issueSelected = ""
+        }
+      }
+    })
+    
+  </script>
+  
+  
+  </body>
+</html>
+
+
